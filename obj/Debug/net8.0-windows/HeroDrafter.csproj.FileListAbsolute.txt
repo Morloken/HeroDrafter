@@ -67,3 +67,6 @@ C:\Users\n-book\Documents\GitHub\HeroDrafter\obj\Debug\net8.0-windows\ref\HeroDr
 C:\Users\n-book\Documents\GitHub\HeroDrafter\bin\Debug\net8.0-windows\Бойцы_описание.txt
 C:\Users\n-book\Documents\GitHub\HeroDrafter\obj\Debug\net8.0-windows\Views\AddEditCharacterWindow.baml
 C:\Users\n-book\Documents\GitHub\HeroDrafter\obj\Debug\net8.0-windows\Views\AddEditCharacterWindow.g.cs
+C:\Users\n-book\Documents\GitHub\HeroDrafter\obj\Debug\net8.0-windows\HeroDrafter.sourcelink.json
+C:\Users\n-book\Documents\GitHub\HeroDrafter\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\n-book\Documents\GitHub\HeroDrafter\obj\Debug\net8.0-windows\HeroDrafter_MarkupCompile.lref

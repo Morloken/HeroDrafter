@@ -30,6 +30,20 @@ namespace HeroDrafter.ViewModels
         public ObservableCollection<Character> AllySlots { get; } = new ObservableCollection<Character>(new Character[3]);
         public ObservableCollection<Character> EnemySlots { get; } = new ObservableCollection<Character>(new Character[3]);
 
+        private int _selectedAllySlot = -1;
+        public int SelectedAllySlot
+        {
+            get => _selectedAllySlot;
+            set { _selectedAllySlot = value; OnPropertyChanged(nameof(SelectedAllySlot)); }
+        }
+
+        private int _selectedEnemySlot = -1;
+        public int SelectedEnemySlot
+        {
+            get => _selectedEnemySlot;
+            set { _selectedEnemySlot = value; OnPropertyChanged(nameof(SelectedEnemySlot)); }
+        }
+
         private int _totalBasePower;
         public int TotalBasePower
         {
@@ -65,10 +79,54 @@ namespace HeroDrafter.ViewModels
             set { _totalEfficiency = value; OnPropertyChanged(nameof(TotalEfficiency)); }
         }
 
+        private int _enemyTotalBasePower;
+        public int EnemyTotalBasePower
+        {
+            get => _enemyTotalBasePower;
+            set { _enemyTotalBasePower = value; OnPropertyChanged(nameof(EnemyTotalBasePower)); }
+        }
+
+        private int _enemyBalanceBonus;
+        public int EnemyBalanceBonus
+        {
+            get => _enemyBalanceBonus;
+            set { _enemyBalanceBonus = value; OnPropertyChanged(nameof(EnemyBalanceBonus)); }
+        }
+
+        private int _enemyCounterPickBonus;
+        public int EnemyCounterPickBonus
+        {
+            get => _enemyCounterPickBonus;
+            set { _enemyCounterPickBonus = value; OnPropertyChanged(nameof(EnemyCounterPickBonus)); }
+        }
+
+        private int _enemyRarityBonus;
+        public int EnemyRarityBonus
+        {
+            get => _enemyRarityBonus;
+            set { _enemyRarityBonus = value; OnPropertyChanged(nameof(EnemyRarityBonus)); }
+        }
+
+        private int _enemyTotalEfficiency;
+        public int EnemyTotalEfficiency
+        {
+            get => _enemyTotalEfficiency;
+            set { _enemyTotalEfficiency = value; OnPropertyChanged(nameof(EnemyTotalEfficiency)); }
+        }
+
+        private string _strongerParty = "";
+        public string StrongerParty
+        {
+            get => _strongerParty;
+            set { _strongerParty = value; OnPropertyChanged(nameof(StrongerParty)); }
+        }
+
         public ICommand AssignAllyCommand { get; }
         public ICommand AssignEnemyCommand { get; }
-        public ICommand ClearAllyCommand { get; }
-        public ICommand ClearEnemyCommand { get; }
+        public ICommand SelectAllySlotCommand { get; }
+        public ICommand SelectEnemySlotCommand { get; }
+        public ICommand RemoveSelectedAllyCommand { get; }
+        public ICommand RemoveSelectedEnemyCommand { get; }
         public ICommand ExportReportCommand { get; }
         public ICommand AddCharacterCommand { get; }
         public ICommand EditCharacterCommand { get; }
@@ -84,8 +142,45 @@ namespace HeroDrafter.ViewModels
 
             AssignAllyCommand = new RelayCommand(_ => AssignToSlot(AllySlots, SelectedCharacter));
             AssignEnemyCommand = new RelayCommand(_ => AssignToSlot(EnemySlots, SelectedCharacter));
-            ClearAllyCommand = new RelayCommand(_ => ClearSlot(AllySlots, null));
-            ClearEnemyCommand = new RelayCommand(_ => ClearSlot(EnemySlots, null));
+            
+            SelectAllySlotCommand = new RelayCommand(param => 
+            {
+                int index = ParseInt(param);
+                if (index >= 0 && index < AllySlots.Count && AllySlots[index] != null)
+                {
+                    SelectedAllySlot = index;
+                    SelectedEnemySlot = -1;
+                }
+            });
+            
+            SelectEnemySlotCommand = new RelayCommand(param => 
+            {
+                int index = ParseInt(param);
+                if (index >= 0 && index < EnemySlots.Count && EnemySlots[index] != null)
+                {
+                    SelectedEnemySlot = index;
+                    SelectedAllySlot = -1;
+                }
+            });
+            
+            RemoveSelectedAllyCommand = new RelayCommand(_ => 
+            {
+                if (SelectedAllySlot >= 0 && SelectedAllySlot < AllySlots.Count)
+                {
+                    AllySlots[SelectedAllySlot] = null;
+                    SelectedAllySlot = -1;
+                }
+            });
+            
+            RemoveSelectedEnemyCommand = new RelayCommand(_ => 
+            {
+                if (SelectedEnemySlot >= 0 && SelectedEnemySlot < EnemySlots.Count)
+                {
+                    EnemySlots[SelectedEnemySlot] = null;
+                    SelectedEnemySlot = -1;
+                }
+            });
+            
             ExportReportCommand = new RelayCommand(_ => ExportReport());
             AddCharacterCommand = new RelayCommand(() => OpenAddEditWindow?.Invoke(null));
             EditCharacterCommand = new RelayCommand(() => OpenAddEditWindow?.Invoke(SelectedCharacter));
@@ -94,6 +189,13 @@ namespace HeroDrafter.ViewModels
 
             AllySlots.CollectionChanged += (s, e) => UpdateAnalytics();
             EnemySlots.CollectionChanged += (s, e) => UpdateAnalytics();
+        }
+
+        private int ParseInt(object param)
+        {
+            if (param is int i) return i;
+            if (param is string s && int.TryParse(s, out int result)) return result;
+            return -1;
         }
 
         private void LoadCharacters()
@@ -120,6 +222,11 @@ namespace HeroDrafter.ViewModels
 
             if (result == System.Windows.MessageBoxResult.Yes)
             {
+                for (int i = 0; i < AllySlots.Count; i++)
+                    if (AllySlots[i]?.Id == character.Id) AllySlots[i] = null;
+                for (int i = 0; i < EnemySlots.Count; i++)
+                    if (EnemySlots[i]?.Id == character.Id) EnemySlots[i] = null;
+
                 _dbManager.DeleteCharacter(character.Id);
                 RefreshCharacters();
             }
@@ -138,31 +245,36 @@ namespace HeroDrafter.ViewModels
             }
         }
 
-        private void ClearSlot(ObservableCollection<Character> slots, object param)
-        {
-            if (param is int index && index >= 0 && index < slots.Count)
-            {
-                slots[index] = null;
-            }
-        }
-
         private void UpdateAnalytics()
         {
-            var allies = AllySlots.Where(c => c != null).ToList();
-            var enemies = EnemySlots.Where(c => c != null).ToList();
+            var allyList = AllySlots.Where(c => c != null).ToList();
+            var enemyList = EnemySlots.Where(c => c != null).ToList();
 
-            TotalBasePower = allies.Sum(c => c.BasePower);
-            BalanceBonus = _analyzer.CalculateTeamBalance(allies);
-            CounterPickBonus = _analyzer.CalculateCounterPicks(allies, enemies);
-            RarityBonus = _analyzer.CalculateRarityBonus(allies);
-            TotalEfficiency = _analyzer.CalculateTotalEfficiency(allies, enemies);
+            TotalBasePower = allyList.Sum(c => c.BasePower);
+            BalanceBonus = _analyzer.CalculateTeamBalance(allyList);
+            CounterPickBonus = _analyzer.CalculateCounterPicks(allyList, enemyList);
+            RarityBonus = _analyzer.CalculateRarityBonus(allyList);
+            TotalEfficiency = _analyzer.CalculateTotalEfficiency(allyList, enemyList);
+
+            EnemyTotalBasePower = enemyList.Sum(c => c.BasePower);
+            EnemyBalanceBonus = _analyzer.CalculateTeamBalance(enemyList);
+            EnemyCounterPickBonus = _analyzer.CalculateCounterPicks(enemyList, allyList);
+            EnemyRarityBonus = _analyzer.CalculateRarityBonus(enemyList);
+            EnemyTotalEfficiency = _analyzer.CalculateTotalEfficiency(enemyList, allyList);
+
+            if (TotalEfficiency > EnemyTotalEfficiency)
+                StrongerParty = "СОЮЗНИКИ";
+            else if (EnemyTotalEfficiency > TotalEfficiency)
+                StrongerParty = "ВОРОГИ";
+            else
+                StrongerParty = "РІВНІ";
         }
 
         private void ExportReport()
         {
-            var allies = AllySlots.Where(c => c != null).ToList();
-            var enemies = EnemySlots.Where(c => c != null).ToList();
-            _dbManager.ExportDraftReport(allies, enemies, TotalEfficiency);
+            var allyList = AllySlots.Where(c => c != null).ToList();
+            var enemyList = EnemySlots.Where(c => c != null).ToList();
+            _dbManager.ExportDraftReport(allyList, enemyList, TotalEfficiency);
         }
     }
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HeroDrafter")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e153276ca8db567eced5fe0e6c80f6d5b4c0bfd6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b6f58f82f1a7ce2ec7e0da52c9050c9a9aea0d7")]
 [assembly: System.Reflection.AssemblyProductAttribute("HeroDrafter")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HeroDrafter")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
