@@ -1,0 +1,24 @@
+# Build results
+bin/
+obj/
+
+# Sensitive files
+*описание*
+*бойцы*
+*.txt
+
+# Database files
+*.mdf
+*.ldf
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Logs
+*.log
+app_debug.txt
+
+# Visual Studio cache
+.vs/
