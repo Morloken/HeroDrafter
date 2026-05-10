@@ -3,6 +3,7 @@
 > WPF desktop application for drafting and analyzing hero teams. Built with .NET 8, MVVM pattern, and pure ADO.NET with LocalDB.
 
 ---
+<img width="1383" height="791" alt="Screenshot 2026-05-10 232910" src="https://github.com/user-attachments/assets/93cbb078-dda8-40e0-a47c-e7e3cb9eacfc" />
 
 ## 🚀 How to Run
 
