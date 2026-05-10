@@ -29,11 +29,34 @@ namespace HeroDrafter.Data
 
         public void InitializeDatabase()
         {
+            string baseDir = AppContext.BaseDirectory;
+            string mdfPath = Path.Combine(baseDir, "HeroDrafterDB.mdf");
+
+            if (DatabaseExists())
+            {
+                if (!File.Exists(mdfPath))
+                {
+                    DropDatabase();
+                }
+            }
+
             if (!DatabaseExists())
             {
                 CreateDatabase();
             }
             CreateTablesIfNotExist();
+        }
+
+        private void DropDatabase()
+        {
+            using (var masterConn = new SqlConnection("Server=(localdb)\\mssqllocaldb;Integrated Security=true;Database=master;"))
+            {
+                masterConn.Open();
+                using (var cmd = new SqlCommand("DROP DATABASE HeroDrafterDB", masterConn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         private bool DatabaseExists()
