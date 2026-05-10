@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using HeroDrafter.Data;
 using HeroDrafter.Business;
@@ -121,6 +122,62 @@ namespace HeroDrafter.ViewModels
             set { _strongerParty = value; OnPropertyChanged(nameof(StrongerParty)); }
         }
 
+        private string _allyRoleDist = "";
+        public string AllyRoleDist
+        {
+            get => _allyRoleDist;
+            set { _allyRoleDist = value; OnPropertyChanged(nameof(AllyRoleDist)); }
+        }
+
+        private string _enemyRoleDist = "";
+        public string EnemyRoleDist
+        {
+            get => _enemyRoleDist;
+            set { _enemyRoleDist = value; OnPropertyChanged(nameof(EnemyRoleDist)); }
+        }
+
+        private string _allyEnergySum = "";
+        public string AllyEnergySum
+        {
+            get => _allyEnergySum;
+            set { _allyEnergySum = value; OnPropertyChanged(nameof(AllyEnergySum)); }
+        }
+
+        private string _enemyEnergySum = "";
+        public string EnemyEnergySum
+        {
+            get => _enemyEnergySum;
+            set { _enemyEnergySum = value; OnPropertyChanged(nameof(EnemyEnergySum)); }
+        }
+
+        private int _allyEnergyBonus;
+        public int AllyEnergyBonus
+        {
+            get => _allyEnergyBonus;
+            set { _allyEnergyBonus = value; OnPropertyChanged(nameof(AllyEnergyBonus)); }
+        }
+
+        private int _enemyEnergyBonus;
+        public int EnemyEnergyBonus
+        {
+            get => _enemyEnergyBonus;
+            set { _enemyEnergyBonus = value; OnPropertyChanged(nameof(EnemyEnergyBonus)); }
+        }
+
+        private int _allyRolePenalty;
+        public int AllyRolePenalty
+        {
+            get => _allyRolePenalty;
+            set { _allyRolePenalty = value; OnPropertyChanged(nameof(AllyRolePenalty)); }
+        }
+
+        private int _enemyRolePenalty;
+        public int EnemyRolePenalty
+        {
+            get => _enemyRolePenalty;
+            set { _enemyRolePenalty = value; OnPropertyChanged(nameof(EnemyRolePenalty)); }
+        }
+
         public ICommand AssignAllyCommand { get; }
         public ICommand AssignEnemyCommand { get; }
         public ICommand SelectAllySlotCommand { get; }
@@ -214,13 +271,13 @@ namespace HeroDrafter.ViewModels
         {
             if (character == null) return;
 
-            var result = System.Windows.MessageBox.Show(
+            var result = MessageBox.Show(
                 $"Видалити персонажа '{character.Name}'?",
                 "Підтвердження",
-                System.Windows.MessageBoxButton.YesNo,
-                System.Windows.MessageBoxImage.Warning);
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
 
-            if (result == System.Windows.MessageBoxResult.Yes)
+            if (result == MessageBoxResult.Yes)
             {
                 for (int i = 0; i < AllySlots.Count; i++)
                     if (AllySlots[i]?.Id == character.Id) AllySlots[i] = null;
@@ -254,12 +311,20 @@ namespace HeroDrafter.ViewModels
             BalanceBonus = _analyzer.CalculateTeamBalance(allyList);
             CounterPickBonus = _analyzer.CalculateCounterPicks(allyList, enemyList);
             RarityBonus = _analyzer.CalculateRarityBonus(allyList);
+            AllyEnergyBonus = _analyzer.CalculateEnergySynergy(allyList);
+            AllyRolePenalty = _analyzer.CalculateMissingRolePenalty(allyList);
+            AllyRoleDist = _analyzer.GetRoleDistribution(allyList);
+            AllyEnergySum = _analyzer.GetEnergySummary(allyList);
             TotalEfficiency = _analyzer.CalculateTotalEfficiency(allyList, enemyList);
 
             EnemyTotalBasePower = enemyList.Sum(c => c.BasePower);
             EnemyBalanceBonus = _analyzer.CalculateTeamBalance(enemyList);
             EnemyCounterPickBonus = _analyzer.CalculateCounterPicks(enemyList, allyList);
             EnemyRarityBonus = _analyzer.CalculateRarityBonus(enemyList);
+            EnemyEnergyBonus = _analyzer.CalculateEnergySynergy(enemyList);
+            EnemyRolePenalty = _analyzer.CalculateMissingRolePenalty(enemyList);
+            EnemyRoleDist = _analyzer.GetRoleDistribution(enemyList);
+            EnemyEnergySum = _analyzer.GetEnergySummary(enemyList);
             EnemyTotalEfficiency = _analyzer.CalculateTotalEfficiency(enemyList, allyList);
 
             if (TotalEfficiency > EnemyTotalEfficiency)
@@ -274,7 +339,28 @@ namespace HeroDrafter.ViewModels
         {
             var allyList = AllySlots.Where(c => c != null).ToList();
             var enemyList = EnemySlots.Where(c => c != null).ToList();
-            _dbManager.ExportDraftReport(allyList, enemyList, TotalEfficiency);
+
+            if (allyList.Count == 0 && enemyList.Count == 0)
+            {
+                MessageBox.Show("Додайте хоча б одного персонажа в Союзники або Вороги!", 
+                    "ПОМИЛКА", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                FileName = "DraftReport.txt",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            bool? result = dialog.ShowDialog();
+            if (result == true && !string.IsNullOrEmpty(dialog.FileName))
+            {
+                _dbManager.ExportDraftReport(allyList, enemyList, TotalEfficiency, dialog.FileName);
+                MessageBox.Show($"Звіт збережено:\n{dialog.FileName}", 
+                    "УСПІХ", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

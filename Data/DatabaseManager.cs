@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Data.SqlClient;
 using System.IO;
 using HeroDrafter.Models;
@@ -218,28 +219,49 @@ namespace HeroDrafter.Data
             }
         }
 
-        public void ExportDraftReport(List<Character> allies, List<Character> enemies, int totalScore)
+        public void ExportDraftReport(List<Character> allies, List<Character> enemies, int totalScore, string filePath = null)
         {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "DraftReport.txt");
+            if (string.IsNullOrEmpty(filePath))
+                filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "DraftReport.txt");
 
-            using (StreamWriter writer = new StreamWriter(path, false))
+            using (StreamWriter writer = new StreamWriter(filePath, false))
             {
-                writer.WriteLine("ЗВІТ ПО ДРАФТУ");
-                writer.WriteLine("===================");
+                string sep = new string('=', 75);
+                writer.WriteLine(sep);
+                writer.WriteLine("ЗВІТ ПО ДРАФТУ".PadLeft(48 + "ЗВІТ ПО ДРАФТУ".Length / 2));
+                writer.WriteLine(sep);
                 writer.WriteLine();
-                writer.WriteLine("СОЮЗНИКИ:");
-                foreach (Character c in allies)
+
+                int allyPower = allies.Sum(c => c.BasePower);
+                int enemyPower = enemies.Sum(c => c.BasePower);
+
+                writer.WriteLine("--- СОЮЗНИКИ (сумарна сила: " + allyPower + ") " + new string('-', 37));
+                writer.WriteLine();
+                for (int i = 0; i < allies.Count; i++)
                 {
-                    writer.WriteLine("- " + c.Name + " (Сила: " + c.BasePower + ")");
+                    var c = allies[i];
+                    string styles = c.CombatStyles.Count > 0 ? string.Join(", ", c.CombatStyles) : "—";
+                    string energies = c.Energies.Count > 0 ? string.Join(", ", c.Energies) : "—";
+                    writer.WriteLine("  " + (i + 1) + ". " + c.Name + "  │ " + c.PrimaryRole + "  │ " + c.Rarity + "  │ Сила: " + c.BasePower);
+                    writer.WriteLine("     Стилі: " + styles + "  │ Енергія: " + energies);
+                    writer.WriteLine();
                 }
+
+                writer.WriteLine("--- ВОРОГИ (сумарна сила: " + enemyPower + ") " + new string('-', 38));
                 writer.WriteLine();
-                writer.WriteLine("ВОРОГИ:");
-                foreach (Character c in enemies)
+                for (int i = 0; i < enemies.Count; i++)
                 {
-                    writer.WriteLine("- " + c.Name + " (Сила: " + c.BasePower + ")");
+                    var c = enemies[i];
+                    string styles = c.CombatStyles.Count > 0 ? string.Join(", ", c.CombatStyles) : "—";
+                    string energies = c.Energies.Count > 0 ? string.Join(", ", c.Energies) : "—";
+                    writer.WriteLine("  " + (i + 1) + ". " + c.Name + "  │ " + c.PrimaryRole + "  │ " + c.Rarity + "  │ Сила: " + c.BasePower);
+                    writer.WriteLine("     Стилі: " + styles + "  │ Енергія: " + energies);
+                    writer.WriteLine();
                 }
-                writer.WriteLine();
+
+                writer.WriteLine(new string('-', 75));
                 writer.WriteLine("ЗАГАЛЬНА ЕФЕКТИВНІСТЬ: " + totalScore);
+                writer.WriteLine(sep);
             }
         }
 

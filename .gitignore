@@ -5,7 +5,6 @@ obj/
 # Sensitive files
 *описание*
 *бойцы*
-*.txt
 
 # Database files
 *.mdf
@@ -17,7 +16,6 @@ obj/
 *.sln.docstates
 
 # Logs
-*.log
 app_debug.txt
 
 # Visual Studio cache

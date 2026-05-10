@@ -1,1 +1,12 @@
 OnStartup: Character count = 1
+OnStartup: Character count = 1
+OnStartup: Character count = 1
+OnStartup: Character count = 1
+OnStartup: Character count = 1
+OnStartup: Character count = 1
+OnStartup: Character count = 1
+OnStartup: Character count = 7
+OnStartup: Character count = 7
+OnStartup: Character count = 7
+OnStartup: Character count = 7
+OnStartup: Character count = 7

@@ -368,29 +368,125 @@
                             <!-- Allies Stats -->
                             <StackPanel Grid.Column="0" Margin="5">
                                 <TextBlock Text="СОЮЗНИКИ" FontWeight="Bold" Foreground="#00FF88" FontSize="13"/>
-                                <TextBlock Text="{Binding TotalBasePower, StringFormat='Загальна Сила: {0}'}" Margin="0,5,0,0"/>
-                                <TextBlock Text="{Binding BalanceBonus, StringFormat='Бонус балансу: {0}'}"/>
-                                <TextBlock Text="{Binding CounterPickBonus, StringFormat='Тактика: {0}'}"/>
-                                <TextBlock Text="{Binding RarityBonus, StringFormat='Бонус рідкості: {0}'}"/>
-                                <TextBlock Text="{Binding TotalEfficiency, StringFormat='ЕФЕКТИВНІСТЬ: {0}'}" 
-                                           FontSize="14" FontWeight="Bold" Foreground="#00FF88" Margin="0,5,0,0"/>
+                                <TextBlock Text="{Binding TotalBasePower, StringFormat='📊 База: {0}'}" Margin="0,5,0,0">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip Content="Сума базової сили всіх героїв команди.&#x0a;&#x0a;Формула: Σ BasePower кожного героя.&#x0a;Базова сила — це початкова потужність героя, що визначає його потенціал у бою." MaxWidth="220" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460"/>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding BalanceBonus, StringFormat='⚖️ Баланс: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Оцінка збалансованості команди за ролями.&#x0a;&#x0a;• Повний набір (танк+підтримка+дамагер): +25&#x0a;• Частковий набір: +10&#x0a;• Немає танка і підтримки: -20&#x0a;• Наявність танка: +5, підтримки: +5, вбивці: +3&#x0a;• Синергія танк+підтримка: +8&#x0a;• 2+ вбивці: -8, 2+ мага: -5</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding CounterPickBonus, StringFormat='🎯 Контр-піки: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Бонуси за контрпіки ворожих героїв.&#x0a;&#x0a;• Вбивця → Підтримка/Маг: +12&#x0a;• Танк/Гібрид → Вбивця: +12&#x0a;• Стрілець/Маг → Танк: +12&#x0a;• Підтримка → Маг: +8&#x0a;• Вбивця vs Вбивця: -5</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding RarityBonus, StringFormat='💎 Рідкість: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Бонуси за рідкість героїв.&#x0a;&#x0a;• Звичайний: 0&#x0a;• Рідкісний: +5&#x0a;• Епічний: +10&#x0a;• Легендарний: +18&#x0a;• Королівський: +25&#x0a;&#x0a;Сума бонусів усіх героїв команди.</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding AllyEnergyBonus, StringFormat='⚡ Енергії: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Бонус за різноманітність типів енергії в команді.&#x0a;&#x0a;• 2+ різних типи: +5 + к-сть типів×2&#x0a;• 3+ типи: додатково +5&#x0a;• 4+ типи: додатково +5&#x0a;&#x0a;Заохочує різноманітність енергій для гнучкості в бою.</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding AllyRolePenalty, StringFormat='⚠️ Штрафи: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Штрафи за відсутність ключових ролей.&#x0a;&#x0a;• Немає танка (включно з гібридом): -15&#x0a;• Немає підтримки: -10&#x0a;• Немає дамагера (маг/стрілець/вбивця): -20</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding TotalEfficiency, StringFormat='🏆 РАЗОМ: {0}'}" 
+                                           FontSize="14" FontWeight="Bold" Foreground="#00FF88" Margin="0,5,0,0">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Загальна ефективність команди.&#x0a;&#x0a;Формула: База + Баланс + Контр-піки + Рідкість + Енергії + Штрафи&#x0a;&#x0a;Чим вище значення, тим теоретично сильніша команда.</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding AllyRoleDist, StringFormat='👤 Склад: {0}'}" 
+                                           FontSize="11" TextWrapping="Wrap" Margin="0,3,0,0">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip Content="Розподіл ролей у команді. Показує, скільки героїв якої ролі присутньо." MaxWidth="220" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460"/>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
                             </StackPanel>
                             
                             <!-- Enemies Stats -->
                             <StackPanel Grid.Column="1" Margin="5">
                                 <TextBlock Text="ВОРОГИ" FontWeight="Bold" Foreground="#E94560" FontSize="13"/>
-                                <TextBlock Text="{Binding EnemyTotalBasePower, StringFormat='Загальна Сила: {0}'}" Margin="0,5,0,0"/>
-                                <TextBlock Text="{Binding EnemyBalanceBonus, StringFormat='Бонус балансу: {0}'}"/>
-                                <TextBlock Text="{Binding EnemyCounterPickBonus, StringFormat='Тактика: {0}'}"/>
-                                <TextBlock Text="{Binding EnemyRarityBonus, StringFormat='Бонус рідкості: {0}'}"/>
-                                <TextBlock Text="{Binding EnemyTotalEfficiency, StringFormat='ЕФЕКТИВНІСТЬ: {0}'}" 
-                                           FontSize="14" FontWeight="Bold" Foreground="#E94560" Margin="0,5,0,0"/>
+                                <TextBlock Text="{Binding EnemyTotalBasePower, StringFormat='📊 База: {0}'}" Margin="0,5,0,0">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip Content="Сума базової сили всіх героїв команди.&#x0a;&#x0a;Формула: Σ BasePower кожного героя.&#x0a;Базова сила — це початкова потужність героя, що визначає його потенціал у бою." MaxWidth="220" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460"/>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding EnemyBalanceBonus, StringFormat='⚖️ Баланс: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Оцінка збалансованості команди за ролями.&#x0a;&#x0a;• Повний набір (танк+підтримка+дамагер): +25&#x0a;• Частковий набір: +10&#x0a;• Немає танка і підтримки: -20&#x0a;• Наявність танка: +5, підтримки: +5, вбивці: +3&#x0a;• Синергія танк+підтримка: +8&#x0a;• 2+ вбивці: -8, 2+ мага: -5</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding EnemyCounterPickBonus, StringFormat='🎯 Контр-піки: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Бонуси за контрпіки ворожих героїв.&#x0a;&#x0a;• Вбивця → Підтримка/Маг: +12&#x0a;• Танк/Гібрид → Вбивця: +12&#x0a;• Стрілець/Маг → Танк: +12&#x0a;• Підтримка → Маг: +8&#x0a;• Вбивця vs Вбивця: -5</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding EnemyRarityBonus, StringFormat='💎 Рідкість: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Бонуси за рідкість героїв.&#x0a;&#x0a;• Звичайний: 0&#x0a;• Рідкісний: +5&#x0a;• Епічний: +10&#x0a;• Легендарний: +18&#x0a;• Королівський: +25&#x0a;&#x0a;Сума бонусів усіх героїв команди.</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding EnemyEnergyBonus, StringFormat='⚡ Енергії: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Бонус за різноманітність типів енергії в команді.&#x0a;&#x0a;• 2+ різних типи: +5 + к-сть типів×2&#x0a;• 3+ типи: додатково +5&#x0a;• 4+ типи: додатково +5&#x0a;&#x0a;Заохочує різноманітність енергій для гнучкості в бою.</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding EnemyRolePenalty, StringFormat='⚠️ Штрафи: {0}'}">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Штрафи за відсутність ключових ролей.&#x0a;&#x0a;• Немає танка (включно з гібридом): -15&#x0a;• Немає підтримки: -10&#x0a;• Немає дамагера (маг/стрілець/вбивця): -20</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding EnemyTotalEfficiency, StringFormat='🏆 РАЗОМ: {0}'}" 
+                                           FontSize="14" FontWeight="Bold" Foreground="#E94560" Margin="0,5,0,0">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip MaxWidth="260" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460">
+                                            <TextBlock TextWrapping="Wrap">Загальна ефективність команди.&#x0a;&#x0a;Формула: База + Баланс + Контр-піки + Рідкість + Енергії + Штрафи&#x0a;&#x0a;Чим вище значення, тим теоретично сильніша команда.</TextBlock>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                                <TextBlock Text="{Binding EnemyRoleDist, StringFormat='👤 Склад: {0}'}" 
+                                           FontSize="11" TextWrapping="Wrap" Margin="0,3,0,0">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip Content="Розподіл ролей у команді. Показує, скільки героїв якої ролі присутньо." MaxWidth="220" TextElement.FontSize="12" Background="#1A1A2E" Foreground="#E0E0E0" BorderBrush="#0F3460"/>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
                             </StackPanel>
                         </Grid>
                         
                         <Separator Margin="0,10" Background="#0F3460"/>
                         
-                        <TextBlock Text="{Binding StrongerParty, StringFormat='ТЕОРЕТИЧНО СИЛЬНІША: {0}'}" 
+                        <TextBlock Text="{Binding StrongerParty, StringFormat='🏆 ТЕОРЕТИЧНО СИЛЬНІША: {0}'}" 
                                    FontSize="16" FontWeight="Bold" Foreground="#FFD700" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Border>
